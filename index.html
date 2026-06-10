@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ระบบจองห้องประชุมคณะ</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-brand">
+    <span class="nav-icon">🏛️</span>
+    <span>ระบบจองห้องประชุมคณะ</span>
+  </div>
+  <div class="nav-links">
+    <a href="#" onclick="showTab('schedule')">📅 ตารางการจอง</a>
+    <a href="#" onclick="showTab('mybookings')">📋 การจองของฉัน</a>
+    <a href="#" onclick="showLoginModal()">👤 เข้าสู่ระบบ</a>
+  </div>
+</nav>
+
+<div class="container">
+  <!-- LEFT: ห้องประชุม -->
+  <aside class="sidebar">
+    <h3>ห้องประชุม</h3>
+    <div id="roomList"></div>
+
+    <!-- การจองของฉัน -->
+    <div id="myBookingsSection" class="my-bookings-section" style="display:none">
+      <h3>การจองของฉัน</h3>
+      <div id="myBookingsList"></div>
+    </div>
+  </aside>
+
+  <!-- MAIN: ตาราง -->
+  <main class="main-content" id="scheduleView">
+    <div class="room-header">
+      <span>📅</span>
+      <h2 id="selectedRoomName">ห้องประชุม 1</h2>
+    </div>
+
+    <div class="date-nav">
+      <button onclick="changeDate(-1)">‹</button>
+      <button onclick="changeDate(-1)">‹</button>
+      <span id="currentDateDisplay"></span>
+      <button onclick="changeDate(1)">›</button>
+      <button class="today-btn" onclick="goToday()">วันนี้</button>
+    </div>
+
+    <div class="schedule-table">
+      <div class="schedule-header">
+        <div class="time-col">เวลา</div>
+        <div class="event-col">การจอง</div>
+      </div>
+      <div id="scheduleBody"></div>
+    </div>
+
+    <div class="legend">
+      <span class="legend-item confirmed">✓ ยืนยันการจองแล้ว</span>
+      <span class="legend-item pending">● รอการอนุมัติ</span>
+      <span class="legend-item inuse">◆ ใช้งานเป็นประจำ</span>
+      <span class="legend-item free">○ ว่าง</span>
+    </div>
+
+    <div class="room-info" id="roomInfo"></div>
+  </main>
+</div>
+
+<!-- MODAL: จองห้อง -->
+<div id="bookingModal" class="modal-overlay" style="display:none">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modalTitle">จองห้องประชุม</h3>
+      <button onclick="closeModal()" class="close-btn">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>วันที่</label>
+        <input type="date" id="bookDate" onchange="validateDate()">
+        <span id="dateError" class="error-text"></span>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>เวลาเริ่มต้น</label>
+          <select id="startTime"></select>
+        </div>
+        <div class="form-group">
+          <label>เวลาสิ้นสุด</label>
+          <select id="endTime"></select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>ชื่อเรื่อง / วัตถุประสงค์</label>
+        <input type="text" id="bookTitle" placeholder="เช่น ประชุมโครงการ / นำเสนอผลงานวิจัย">
+      </div>
+      <div class="form-group">
+        <label>ผู้จอง (ชื่อ-นามสกุล)</label>
+        <input type="text" id="bookerName" placeholder="ชื่อ-นามสกุล">
+      </div>
+      <div class="form-group">
+        <label>เลขบัตรนิสิต</label>
+        <input type="text" id="studentId" placeholder="เช่น 6412345678" maxlength="10">
+      </div>
+      <div class="form-group">
+        <label>หน่วยงาน / สาขา</label>
+        <input type="text" id="department" placeholder="เช่น ภาควิชาวิศวกรรมคอมพิวเตอร์">
+      </div>
+      <div class="form-group">
+        <label>เบอร์โทรติดต่อ</label>
+        <input type="text" id="phone" placeholder="เช่น 081-234-5678">
+      </div>
+      <div class="form-group">
+        <label>หมายเหตุ (ถ้ามี)</label>
+        <textarea id="note" placeholder="ระบุเพิ่มเติม (ถ้ามี)" rows="2"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">ยกเลิก</button>
+      <button class="btn-confirm" onclick="submitBooking()">ตรวจสอบการจอง</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
