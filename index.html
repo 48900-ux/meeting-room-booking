@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ระบบจองห้องประชุมคณะ</title>
+  <title>Meeting Room Booking System</title>
   <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -13,113 +13,112 @@
 <nav class="navbar">
   <div class="nav-brand">
     <span class="nav-icon">🏛️</span>
-    <span>ระบบจองห้องประชุมคณะ</span>
+    <span>Meeting Room Booking System</span>
   </div>
   <div class="nav-links">
-    <a href="#" onclick="showTab('schedule')">📅 ตารางการจอง</a>
-    <a href="#" onclick="showTab('mybookings')">📋 การจองของฉัน</a>
-    <a href="#" onclick="showLoginModal()">👤 เข้าสู่ระบบ</a>
+    <a href="#" onclick="showTab('schedule')">📅 Schedule</a>
+    <a href="#" onclick="showTab('mybookings')">📋 My Bookings</a>
+    <a href="#" onclick="showLoginModal()">👤 Login</a>
   </div>
 </nav>
 
 <div class="container">
-  <!-- LEFT: ห้องประชุม -->
+  <!-- LEFT: Rooms -->
   <aside class="sidebar">
-    <h3>ห้องประชุม</h3>
+    <h3>Meeting Rooms</h3>
     <div id="roomList"></div>
 
-    <!-- การจองของฉัน -->
+    <!-- My Bookings -->
     <div id="myBookingsSection" class="my-bookings-section" style="display:none">
-      <h3>การจองของฉัน</h3>
+      <h3>My Bookings</h3>
       <div id="myBookingsList"></div>
     </div>
   </aside>
 
-  <!-- MAIN: ตาราง -->
+  <!-- MAIN: Schedule -->
   <main class="main-content" id="scheduleView">
     <div class="room-header">
       <span>📅</span>
-      <h2 id="selectedRoomName">ห้องประชุม 1</h2>
+      <h2 id="selectedRoomName">Meeting Room 1</h2>
     </div>
 
     <div class="date-nav">
       <button onclick="changeDate(-1)">‹</button>
-      <button onclick="changeDate(-1)">‹</button>
       <span id="currentDateDisplay"></span>
       <button onclick="changeDate(1)">›</button>
-      <button class="today-btn" onclick="goToday()">วันนี้</button>
+      <button class="today-btn" onclick="goToday()">Today</button>
     </div>
 
     <div class="schedule-table">
       <div class="schedule-header">
-        <div class="time-col">เวลา</div>
-        <div class="event-col">การจอง</div>
+        <div class="time-col">Time</div>
+        <div class="event-col">Booking</div>
       </div>
       <div id="scheduleBody"></div>
     </div>
 
     <div class="legend">
-      <span class="legend-item confirmed">✓ ยืนยันการจองแล้ว</span>
-      <span class="legend-item pending">● รอการอนุมัติ</span>
-      <span class="legend-item inuse">◆ ใช้งานเป็นประจำ</span>
-      <span class="legend-item free">○ ว่าง</span>
+      <span class="legend-item confirmed">Confirmed</span>
+      <span class="legend-item pending">Pending</span>
+      <span class="legend-item inuse">Regular Use</span>
+      <span class="legend-item free">Available</span>
     </div>
 
     <div class="room-info" id="roomInfo"></div>
   </main>
 </div>
 
-<!-- MODAL: จองห้อง -->
+<!-- MODAL: Book Room -->
 <div id="bookingModal" class="modal-overlay" style="display:none">
   <div class="modal">
     <div class="modal-header">
-      <h3 id="modalTitle">จองห้องประชุม</h3>
+      <h3 id="modalTitle">Book Meeting Room</h3>
       <button onclick="closeModal()" class="close-btn">✕</button>
     </div>
     <div class="modal-body">
       <div class="form-group">
-        <label>วันที่</label>
+        <label>Date</label>
         <input type="date" id="bookDate" onchange="validateDate()">
         <span id="dateError" class="error-text"></span>
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label>เวลาเริ่มต้น</label>
+          <label>Start Time</label>
           <select id="startTime"></select>
         </div>
         <div class="form-group">
-          <label>เวลาสิ้นสุด</label>
+          <label>End Time</label>
           <select id="endTime"></select>
         </div>
       </div>
       <div class="form-group">
-        <label>ชื่อเรื่อง / วัตถุประสงค์</label>
-        <input type="text" id="bookTitle" placeholder="เช่น ประชุมโครงการ / นำเสนอผลงานวิจัย">
+        <label>Title / Purpose</label>
+        <input type="text" id="bookTitle" placeholder="e.g. Project Meeting / Research Presentation">
       </div>
       <div class="form-group">
-        <label>ผู้จอง (ชื่อ-นามสกุล)</label>
-        <input type="text" id="bookerName" placeholder="ชื่อ-นามสกุล">
+        <label>Full Name</label>
+        <input type="text" id="bookerName" placeholder="First and Last Name">
       </div>
       <div class="form-group">
-        <label>เลขบัตรนิสิต</label>
-        <input type="text" id="studentId" placeholder="เช่น 6412345678" maxlength="10">
+        <label>Student ID</label>
+        <input type="text" id="studentId" placeholder="e.g. 6412345678" maxlength="10">
       </div>
       <div class="form-group">
-        <label>หน่วยงาน / สาขา</label>
-        <input type="text" id="department" placeholder="เช่น ภาควิชาวิศวกรรมคอมพิวเตอร์">
+        <label>Department / Faculty</label>
+        <input type="text" id="department" placeholder="e.g. Computer Engineering">
       </div>
       <div class="form-group">
-        <label>เบอร์โทรติดต่อ</label>
-        <input type="text" id="phone" placeholder="เช่น 081-234-5678">
+        <label>Phone Number</label>
+        <input type="text" id="phone" placeholder="e.g. 081-234-5678">
       </div>
       <div class="form-group">
-        <label>หมายเหตุ (ถ้ามี)</label>
-        <textarea id="note" placeholder="ระบุเพิ่มเติม (ถ้ามี)" rows="2"></textarea>
+        <label>Note (optional)</label>
+        <textarea id="note" placeholder="Additional details (optional)" rows="2"></textarea>
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn-cancel" onclick="closeModal()">ยกเลิก</button>
-      <button class="btn-confirm" onclick="submitBooking()">ตรวจสอบการจอง</button>
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-confirm" onclick="submitBooking()">Confirm Booking</button>
     </div>
   </div>
 </div>

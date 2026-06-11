@@ -1,5 +1,5 @@
 // ===== CONFIG =====
-const API_URL = 'https://script.google.com/macros/s/AKfycbznlO37XdLkAo5pB55Y3ae3qyTs3g19A9qMd-LHr6NpzLEicTgxZd8d2oa3SJabmvmKIg/exec'; // ← ใส่ URL จาก Step 2
+const API_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE'; // ← Replace with your Apps Script URL
 
 // ===== STATE =====
 let rooms = [];
@@ -30,11 +30,11 @@ function renderRoomList() {
   const el = document.getElementById('roomList');
   el.innerHTML = rooms.map(room => `
     <div class="room-card ${currentRoom?.id == room.id ? 'active' : ''}" onclick="selectRoom(${JSON.stringify(room).replace(/"/g,"'")})">
-      <img src="${room.image_url}" alt="${room.name}" onerror="this.src='https://via.placeholder.com/240x130?text=ห้องประชุม'">
+      <img src="${room.image_url}" alt="${room.name}" onerror="this.src='https://via.placeholder.com/240x130?text=Meeting+Room'">
       <div class="room-card-body">
         <h4>${room.name}</h4>
-        <div class="room-capacity">👥 รองรับ ${room.capacity} คน</div>
-        <button class="btn-view" onclick="event.stopPropagation(); openBookingModal(${room.id})">ดูตาราง / จอง</button>
+        <div class="room-capacity">👥 Capacity: ${room.capacity} people</div>
+        <button class="btn-view" onclick="event.stopPropagation(); openBookingModal(${room.id})">View / Book</button>
       </div>
     </div>
   `).join('');
@@ -51,9 +51,9 @@ function selectRoom(room) {
 function renderRoomInfo() {
   if (!currentRoom) return;
   document.getElementById('roomInfo').innerHTML = `
-    <div class="info-item">👥 รองรับสูงสุด ${currentRoom.capacity} คน</div>
-    <div class="info-item">🖥️ อุปกรณ์: ${currentRoom.equipment}</div>
-    <div class="info-item">📶 สิ่งอำนวยความสะดวก: Wi-Fi, ปลั๊กไฟ, กระดานไวท์บอร์ด</div>
+    <div class="info-item">👥 Max capacity: ${currentRoom.capacity} people</div>
+    <div class="info-item">🖥️ Equipment: ${currentRoom.equipment}</div>
+    <div class="info-item">📶 Facilities: Wi-Fi, Power outlets, Whiteboard</div>
   `;
 }
 
@@ -111,14 +111,14 @@ function formatDate(d) {
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
 
-function formatDateThai(d) {
-  const months = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน',
-                  'กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
-  return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear() + 543}`;
+function formatDateEng(d) {
+  const months = ['January','February','March','April','May','June',
+                  'July','August','September','October','November','December'];
+  return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
 }
 
 function renderDateDisplay() {
-  document.getElementById('currentDateDisplay').textContent = formatDateThai(currentDate);
+  document.getElementById('currentDateDisplay').textContent = formatDateEng(currentDate);
 }
 
 function changeDate(delta) {
@@ -152,7 +152,7 @@ function generateTimeOptions() {
 
 function openBookingModal(roomId, prefillTime) {
   currentRoom = rooms.find(r => r.id == roomId) || currentRoom;
-  document.getElementById('modalTitle').textContent = `จอง${currentRoom?.name || 'ห้องประชุม'}`;
+  document.getElementById('modalTitle').textContent = `Book ${currentRoom?.name || 'Meeting Room'}`;
   document.getElementById('bookDate').value = formatDate(currentDate);
   if (prefillTime) {
     document.getElementById('startTime').value = prefillTime;
@@ -176,8 +176,8 @@ function validateDate() {
   today.setHours(0,0,0,0);
   const diff = (selected - today) / (1000*60*60*24);
 
-  if (diff < 0) { el.textContent = '❌ ไม่สามารถจองวันที่ผ่านมาแล้ว'; return false; }
-  if (diff > 2) { el.textContent = '❌ จองล่วงหน้าได้ไม่เกิน 2 วัน'; return false; }
+  if (diff < 0) { el.textContent = '❌ Cannot book a past date'; return false; }
+  if (diff > 2) { el.textContent = '❌ Cannot book more than 2 days in advance'; return false; }
   el.textContent = '';
   return true;
 }
@@ -201,15 +201,15 @@ async function submitBooking() {
 
   // Validate
   if (!data.title || !data.booker_name || !data.student_id || !data.department || !data.phone) {
-    showToast('❌ กรุณากรอกข้อมูลให้ครบถ้วน');
+    showToast('❌ Please fill in all required fields');
     return;
   }
   if (!/^\d{10}$/.test(data.student_id)) {
-    showToast('❌ เลขบัตรนิสิตต้องเป็นตัวเลข 10 หลัก');
+    showToast('❌ Student ID must be exactly 10 digits');
     return;
   }
   if (data.start_time >= data.end_time) {
-    showToast('❌ เวลาเริ่มต้นต้องน้อยกว่าเวลาสิ้นสุด');
+    showToast('❌ Start time must be before end time');
     return;
   }
 
@@ -220,21 +220,21 @@ async function submitBooking() {
     });
     const result = await res.json();
     if (result.success) {
-      showToast('✅ จองสำเร็จ!');
+      showToast('✅ Booking successful!');
       closeModal();
       loadSchedule();
     } else {
       showToast(`❌ ${result.message}`);
     }
   } catch(e) {
-    showToast('❌ เกิดข้อผิดพลาด กรุณาลองใหม่');
+    showToast('❌ An error occurred. Please try again.');
   }
 }
 
 // ===== MY BOOKINGS =====
 function showTab(tab) {
   if (tab === 'mybookings') {
-    const sid = prompt('กรุณากรอกเลขบัตรนิสิตของคุณ:');
+    const sid = prompt('Please enter your Student ID:');
     if (sid) loadMyBookings(sid);
   }
 }
@@ -246,41 +246,49 @@ async function loadMyBookings(studentId) {
     renderMyBookings(data, studentId);
     document.getElementById('myBookingsSection').style.display = 'block';
   } catch(e) {
-    showToast('❌ ไม่สามารถโหลดข้อมูลได้');
+    showToast('❌ Failed to load bookings');
   }
 }
 
 function renderMyBookings(bookings, studentId) {
   const el = document.getElementById('myBookingsList');
-  if (!bookings.length) { el.innerHTML = '<p style="font-size:13px;color:#999">ไม่มีการจอง</p>'; return; }
+  if (!bookings.length) {
+    el.innerHTML = '<p style="font-size:13px;color:#999">No bookings found</p>';
+    return;
+  }
 
   el.innerHTML = bookings.map(b => {
     const room = rooms.find(r => r.id == b.room_id);
+    const statusLabel = b.status === 'confirmed' ? 'Confirmed' : b.status === 'cancelled' ? 'Cancelled' : 'Pending';
     return `
       <div class="booking-item">
         <div class="booking-item-header">
           ${b.title}
-          <span class="badge ${b.status}">${b.status === 'confirmed' ? 'ยืนยันแล้ว' : b.status === 'cancelled' ? 'ยกเลิกแล้ว' : 'รออนุมัติ'}</span>
+          <span class="badge ${b.status}">${statusLabel}</span>
         </div>
         <div>${b.date} | ${b.start_time} - ${b.end_time}</div>
-        <div>${room?.name || 'ห้องประชุม'}</div>
-        ${b.status !== 'cancelled' ? `<button class="btn-cancel-booking" onclick="cancelBooking('${b.id}','${studentId}')">ยกเลิกการจอง</button>` : ''}
+        <div>${room?.name || 'Meeting Room'}</div>
+        ${b.status !== 'cancelled' ? `<button class="btn-cancel-booking" onclick="cancelBooking('${b.id}','${studentId}')">Cancel Booking</button>` : ''}
       </div>`;
   }).join('');
 }
 
 async function cancelBooking(id, studentId) {
-  if (!confirm('ยืนยันการยกเลิกการจอง?')) return;
+  if (!confirm('Are you sure you want to cancel this booking?')) return;
   try {
     const res = await fetch(API_URL, {
       method: 'POST',
       body: JSON.stringify({ action: 'cancelBooking', id, student_id: studentId })
     });
     const result = await res.json();
-    showToast(result.success ? '✅ ยกเลิกสำเร็จ' : `❌ ${result.message}`);
-    if (result.success) loadMyBookings(studentId);
+    if (result.success) {
+      showToast('✅ Booking cancelled successfully');
+      loadMyBookings(studentId);
+    } else {
+      showToast(`❌ ${result.message}`);
+    }
   } catch(e) {
-    showToast('❌ เกิดข้อผิดพลาด');
+    showToast('❌ An error occurred. Please try again.');
   }
 }
 
