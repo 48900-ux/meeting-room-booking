@@ -1,5 +1,5 @@
 // ===== CONFIG =====
-const API_URL = 'https://script.google.com/macros/s/AKfycbyWTlE94PpDSCasMQKmuQ2MLZQCkkzF_voWtqDofGooHhbHgNFXwGgIlMO3UHkur3xI8g/exec'; // ← ใส่ URL จาก Step 2
+const API_URL = 'https://script.google.com/macros/s/AKfycbznlO37XdLkAo5pB55Y3ae3qyTs3g19A9qMd-LHr6NpzLEicTgxZd8d2oa3SJabmvmKIg/exec'; // ← ใส่ URL จาก Step 2
 
 // ===== STATE =====
 let rooms = [];
