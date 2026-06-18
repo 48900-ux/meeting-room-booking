@@ -1,5 +1,5 @@
 // ===== CONFIG =====
-const API_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE'; // ← Replace with your Apps Script URL
+const API_URL = 'https://script.google.com/macros/s/AKfycbw7yF4z9nBbXYfptctHPqfIol_frxzeYfXaWBxhiovX2Gh_k3vUv_lgog3oyTLJO1SKIw/exec'; // ← Replace with your Apps Script URL
 
 // ===== STATE =====
 let rooms = [];
