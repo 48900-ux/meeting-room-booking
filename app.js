@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 // ===== ROOMS =====
 async function loadRooms() {
   try {
-    const res = await fetch(`${API_URL}?action=getRooms`);
+    const res = await fetch(`${API_URL}?action=getRooms&_=${Date.now()}`, { cache: 'no-store' });
     rooms = await res.json();
     renderRoomList();
   } catch(e) {
@@ -62,7 +62,7 @@ async function loadSchedule() {
   if (!currentRoom) return;
   const dateStr = formatDate(currentDate);
   try {
-    const res = await fetch(`${API_URL}?action=getBookings&date=${dateStr}&room_id=${currentRoom.id}`);
+    const res = await fetch(`${API_URL}?action=getBookings&date=${dateStr}&room_id=${currentRoom.id}&_=${Date.now()}`, { cache: 'no-store' });
     bookings = await res.json();
     renderSchedule();
   } catch(e) {
@@ -241,7 +241,7 @@ function showTab(tab) {
 
 async function loadMyBookings(studentId) {
   try {
-    const res = await fetch(`${API_URL}?action=getMyBookings&student_id=${studentId}`);
+   const res = await fetch(`${API_URL}?action=getMyBookings&student_id=${studentId}&_=${Date.now()}`, { cache: 'no-store' });
     const data = await res.json();
     renderMyBookings(data, studentId);
     document.getElementById('myBookingsSection').style.display = 'block';

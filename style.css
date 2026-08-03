@@ -229,3 +229,18 @@ body { font-family: 'Sarabun', sans-serif; background: #f0f4f8; color: #333; }
   pointer-events: none;
 }
 .toast.show { opacity: 1; }
+@media (max-width: 768px) {
+  .container { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #e2e8f0;
+    max-height: 300px;
+  }
+  .main-content { padding: 16px; }
+  .modal { width: 92%; max-height: 85vh; }
+  .form-row { flex-direction: column; gap: 0; }
+  .nav-links { gap: 12px; font-size: 13px; }
+  .nav-brand { font-size: 15px; }
+  .room-info { flex-direction: column; gap: 8px; }
+}
